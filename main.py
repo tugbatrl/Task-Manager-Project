@@ -18,4 +18,23 @@ with open("users.txt" , "a") as user_file :
         print(f"Welcome {username}!")
 
 
+#adding tasks
+
+
+task_file = f"{username}_tasks.txt"
+
+with open(task_file , "a") as user_task_file :
+
+    while (True) :
+        task = input("Enter new task (to exit press 1) : ")
+
+        if task == "1" :
+            break
+        if len(task) > 100:
+            print("Görev çok uzun, tekrar dene.")
+            continue
+        
+        user_task_file.write(f"{task} \n") 
+        task = input("Enter new task (to exit press 1) : ")
+print("Tasks saved !")
 
