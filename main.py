@@ -35,6 +35,5 @@ with open(task_file , "a") as user_task_file :
             continue
         
         user_task_file.write(f"{task} \n") 
-        task = input("Enter new task (to exit press 1) : ")
 print("Tasks saved !")
 
