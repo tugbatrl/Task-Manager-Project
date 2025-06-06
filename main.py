@@ -23,17 +23,38 @@ with open("users.txt" , "a") as user_file :
 
 task_file = f"{username}_tasks.txt"
 
-with open(task_file , "a") as user_task_file :
+def task_writer(task_file):
 
-    while (True) :
-        task = input("Enter new task (to exit press 1) : ")
+    with open(task_file , "a") as user_task_file :
 
-        if task == "1" :
-            break
-        if len(task) > 100:
-            print("Görev çok uzun, tekrar dene.")
-            continue
+        while (True) :
+            task = input("Enter new task (to exit press 1) : ")
+
+            if task == "1" :
+                break
+            if len(task) > 100:
+                print("Görev çok uzun, tekrar dene.")
+                continue
         
-        user_task_file.write(f"{task} \n") 
-print("Tasks saved !")
+            user_task_file.write(f"{task} \n") 
+    print("Tasks saved !")
+
+#görev okuma fonksiyonu
+
+def task_reader(task_file):
+
+    try:
+        with open(task_file , "r") as user_task_file :
+            
+            if not line :
+                print("file empty")
+            else:
+                for line , i in enumerate(user_task_file , start = 1 ):
+                    
+                    print(f"{i}- {line.strip()}")
+    except FileNotFoundError:
+        print("File cannot be found new file creating...")
+        with open(task_file , "x") as user_task_file :
+
+            pass
 
