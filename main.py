@@ -74,30 +74,45 @@ def delete_task(task_file):
                 print("Task list is empty")
                 return
 
-        
             for i , line in enumerate(lines , start = 1 ):
                 print(f"{i}- {line.strip()}")
 
-        delete_input_list = input("Please choose the tasks that you want to delete (put coma between numbers) : ").split(",")
 
-        if delete_input_list == ['']:
-            print("No input provided.")
-            return
+        max_input = len(lines)
+        while True :
+            delete_input_list = input("Please choose the tasks that you want to delete (put comma between numbers) : ").split(",")
 
-        delete_indexes=[int(i.strip()) for i in delete_input_list]
-        new_task = []
-        for i , task in enumerate(lines , start= 1) :
-            if i not in delete_indexes:
-                new_task.append(task)
+            if delete_input_list == ['']:
+                print("No input provided.")
+                return
+            try:
+                delete_indexes = [int(i.strip()) for i in delete_input_list]
+            except ValueError:
+                print("Please enter valid numbers separated by commas.")
+                continue
 
-        with open(task_file , "w") as user_task_file :
+            for i in delete_indexes:
+                if i < 1 or i > max_input :
+                    print("invalid input , try again!")
+                    break
 
-            for task in new_task :
-                user_task_file.write(task)
-        print("Deleting completed!")
+            else:
 
-        print("\nUpdated task list:")
-        task_reader(task_file)
+                new_task = []
+                for i , task in enumerate(lines , start= 1) :
+                    if i not in delete_indexes:
+                        new_task.append(task)
+
+                with open(task_file , "w") as user_task_file :
+
+                    for task in new_task :
+                        user_task_file.write(task)
+                print("Deleting completed!")
+
+                print("\nUpdated task list:")
+                task_reader(task_file)
+                break
+            continue
 
 
     except FileNotFoundError:
