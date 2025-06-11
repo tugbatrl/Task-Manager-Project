@@ -80,6 +80,10 @@ def delete_task(task_file):
 
         delete_input_list = input("Please choose the tasks that you want to delete (put coma between numbers) : ").split(",")
 
+        if delete_input_list == ['']:
+            print("No input provided.")
+            return
+
         delete_indexes=[int(i.strip()) for i in delete_input_list]
         new_task = []
         for i , task in enumerate(lines , start= 1) :
@@ -91,6 +95,10 @@ def delete_task(task_file):
             for task in new_task :
                 user_task_file.write(task)
         print("Deleting completed!")
+
+        print("\nUpdated task list:")
+        task_reader(task_file)
+
 
     except FileNotFoundError:
         print("File cannot be found. Firstly create a file. (to create a file choose option 2 - add new tasks)")
@@ -111,23 +119,23 @@ while (True) :
     print("3 - Delete tasks")
     print("4 - Exit")
     print()
-    user_choice = int(input(
-    "Select an option :"))
+    user_choice = input(
+    "Select an option :")
 
     match user_choice :
-        case 1 :
+        case "1" :
             print(" --- ")
             task_reader(task_file)
             print(" --- ")
-        case 2 :
+        case "2" :
             print(" --- ")
             task_writer(task_file)
             print(" --- ")                  
-        case 3 :
+        case "3" :
             print(" --- ")
             delete_task(task_file)
             print(" --- ")
-        case 4 :
+        case "4" :
             print(f"Have a nice day {username}!")
             break
 
