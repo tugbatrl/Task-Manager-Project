@@ -52,7 +52,7 @@ def task_reader(task_file):
                 print("Task list is empty")
 
             else:
-                for i , line in enumerate(user_task_file , start = 1 ):
+                for i , line in enumerate(lines , start = 1 ):
                     print(f"{i}- {line.strip()}")
 
                  
