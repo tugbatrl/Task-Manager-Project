@@ -1,3 +1,5 @@
 clean house 
 make dinner 
 clean dishes 
+welcome guests 
+complete projects 

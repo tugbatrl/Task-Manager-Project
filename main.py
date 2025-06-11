@@ -18,12 +18,12 @@ with open("users.txt" , "a") as user_file :
         print(f"Welcome {username}!")
 
 
-#adding tasks
+#adding tasks func
 
 
 task_file = f"{username}_tasks.txt"
 
-def task_writer(task_file):
+def task_writer(task_file): 
 
     with open(task_file , "a") as user_task_file :
 
@@ -32,6 +32,7 @@ def task_writer(task_file):
 
             if task == "1" :
                 break
+
             if len(task) > 100:
                 print("Görev çok uzun, tekrar dene.")
                 continue
@@ -39,22 +40,58 @@ def task_writer(task_file):
             user_task_file.write(f"{task} \n") 
     print("Tasks saved !")
 
-#görev okuma fonksiyonu
+#task read func
 
 def task_reader(task_file):
 
     try:
         with open(task_file , "r") as user_task_file :
-            
-            if not line :
-                print("file empty")
+            lines = user_task_file.readlines()
+
+            if not lines :
+                print("Task list is empty")
+
             else:
-                for line , i in enumerate(user_task_file , start = 1 ):
-                    
+                for i , line in enumerate(user_task_file , start = 1 ):
                     print(f"{i}- {line.strip()}")
+
+                 
+
     except FileNotFoundError:
+        
         print("File cannot be found new file creating...")
+        
         with open(task_file , "x") as user_task_file :
 
             pass
+
+#menu
+print(f"What would you like to do today {username} ?")
+print(" --- ")
+while (True) :
+
+    print("1 - Read tasks")
+    print("2 - Add new tasks")
+    print("3 - Exit")
+    print()
+    user_choice = int(input(
+    "Select an option :"))
+
+    match user_choice :
+        case 1 :
+            print(" --- ")
+            task_reader(task_file)
+            print(" --- ")
+        case 2 :
+            print(" --- ")
+            task_writer(task_file)
+            print(" --- ")
+        case 3 :
+            print(f"Have a nice day {username}!")
+            break
+        case _ :
+            print("İnvalid input . Please try again!")
+            print(" --- ")
+
+    print("Anything you would like to do?")
 
