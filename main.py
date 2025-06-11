@@ -55,7 +55,6 @@ def task_reader(task_file):
                 for i , line in enumerate(lines , start = 1 ):
                     print(f"{i}- {line.strip()}")
 
-                 
 
     except FileNotFoundError:
         
@@ -65,6 +64,40 @@ def task_reader(task_file):
 
             pass
 
+def delete_task(task_file): 
+    print("Tasks: ")
+    try:
+        with open(task_file , "r") as user_task_file :
+            lines = user_task_file.readlines()
+
+            if not lines :
+                print("Task list is empty")
+                return
+
+        
+            for i , line in enumerate(lines , start = 1 ):
+                print(f"{i}- {line.strip()}")
+
+        delete_input_list = input("Please choose the tasks that you want to delete (put coma between numbers) : ").split(",")
+
+        delete_indexes=[int(i.strip()) for i in delete_input_list]
+        new_task = []
+        for i , task in enumerate(lines , start= 1) :
+            if i not in delete_indexes:
+                new_task.append(task)
+
+        with open(task_file , "w") as user_task_file :
+
+            for task in new_task :
+                user_task_file.write(task)
+        print("Deleting completed!")
+
+    except FileNotFoundError:
+        print("File cannot be found. Firstly create a file. (to create a file choose option 2 - add new tasks)")
+        return
+
+
+
 #menu
 print(f"What would you like to do today {username} ?")
 print(" --- ")
@@ -72,7 +105,8 @@ while (True) :
 
     print("1 - Read tasks")
     print("2 - Add new tasks")
-    print("3 - Exit")
+    print("3 - Delete tasks")
+    print("4 - Exit")
     print()
     user_choice = int(input(
     "Select an option :"))
@@ -85,10 +119,15 @@ while (True) :
         case 2 :
             print(" --- ")
             task_writer(task_file)
-            print(" --- ")
+            print(" --- ")                  
         case 3 :
+            print(" --- ")
+            delete_task(task_file)
+            print(" --- ")
+        case 4 :
             print(f"Have a nice day {username}!")
             break
+
         case _ :
             print("İnvalid input . Please try again!")
             print(" --- ")
