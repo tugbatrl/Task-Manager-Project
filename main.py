@@ -43,36 +43,37 @@ def json_file_check(task_file) :
 
 def task_writer(task_file): 
 
-        task_list = json_file_check(task_file)
+    task_list = json_file_check(task_file)
 
-        while (True) :
-            task = input("Enter new task (to exit press 1) : ")
+    while (True) :
+        task = input("Enter new task (to exit press 1) : ")
 
-            if task == "":
-                print("Task cannot be empty! Try again.")
-                continue
+        if task == "":
+            print("Task cannot be empty! Try again.")
+            continue
 
-            if task == "1" :
-                break
+        if task == "1" :
+            break
 
-            if len(task) > 100:
-                print("Görev çok uzun, tekrar dene.")
-                continue
+        if len(task) > 100:
+            print("Görev çok uzun, tekrar dene.")
+            continue
 
-            category = input("Enter category (to skip press enter): ")
-            due_date = input("Enter due date (to skip press enter): ")
+        category = input("Enter category (to skip press enter): ")
+        due_date = input("Enter due date (to skip press enter): ")
         
-            task_dic = {
-                "task" : task ,
-                "category" : category if category else None,
-                "due_date" : due_date if due_date else None,
-                "completed": False
+        task_dic = {
+            "task" : task ,
+            "category" : category if category else None,
+            "due_date" : due_date if due_date else None,
+            "completed": False
             }
 
-            task_list.append(task_dic)
-        with open(task_file , "w") as user_task_file :
-            json.dump(task_list ,user_task_file, indent=4)
-        print("Tasks saved !")
+        task_list.append(task_dic)
+
+    with open(task_file , "w") as user_task_file :
+        json.dump(task_list ,user_task_file, indent=4)
+    print("Tasks saved !")
 
 #task read func
 
@@ -85,8 +86,11 @@ def task_reader(task_file):
 
     else:
         for i , task in enumerate(task_list , start = 1 ):
-            if task["complete" == False] :
-                print(f"{i}- Task : {task["task"]}\n - Category : {task["category"]}\n - Due date : {task["due_date"]}")
+            if task["completed"] == False :
+                print(f"[ ] {i}- Task : {task["task"]}\n - Category : {task["category"]}\n - Due date : {task["due_date"]}")
+                print()
+            elif task["completed"] == True :
+                print(f"[x] {i}- Task : {task["task"]}\n - Category : {task["category"]}\n - Due date : {task["due_date"]}")
                 print()
 
 
@@ -140,52 +144,80 @@ def delete_task(task_file):
 
 def edit_task(task_file):
 
-        try:
-            
-            task_list = json_file_check(task_file)
-            print("Tasks:")
-            task_reader(task_file)
-            if not task_list:
-                return
+    try:
+        task_list = json_file_check(task_file)
+        print("Tasks:")
+        task_reader(task_file)
+        if not task_list:
+            return
 
-            while True :
-                user_choice = int(input("Choose the task to edit :"))
+        while True :
+            user_choice = int(input("Choose the task to edit :"))
 
-                if user_choice < 1 or user_choice > len(task_list) :
-                    print(f"Please enter between 1 and {len(task_list)} ")
-                    continue
+            if user_choice < 1 or user_choice > len(task_list) :
+                print(f"Please enter between 1 and {len(task_list)} ")
+                continue
 
-                else:
+            else:
 
-                    while True:
+                while True:
 
-                        new_task = input("Enter new task: ")
-                        if new_task == "":
-                            print("Task cannot be empty! Try again.")
-                            continue
-                        break
-
-                    new_category = input("Enter category (to skip press enter): ")
-                    new_due_date = input("Enter due date (to skip press enter): ")
-
-                    new_task_dict =  {"task" : new_task ,
-                                      "category" : new_category if new_category else None,
-                                      "due_date" : new_due_date if new_due_date else None 
-                                     }
-
-                    task_list[user_choice - 1] = new_task_dict
-
-                    with open(task_file , "w") as user_task_file :
-                        json.dump(task_list , user_task_file , indent= 3)
+                    new_task = input("Enter new task: ")
+                    if new_task == "":
+                        print("Task cannot be empty! Try again.")
+                        continue
                     break
 
-            print("Task edited succesfully!")
-            print("\n")
-            print("New task list : ")
-            task_reader(task_file)
+                new_category = input("Enter category (to skip press enter): ")
+                new_due_date = input("Enter due date (to skip press enter): ")
 
+                task_list[user_choice - 1]["task"] = new_task
+                task_list[user_choice - 1]["category"] = new_category if new_category else None
+                task_list[user_choice - 1]["due_date"] = new_due_date if new_due_date else None
+
+                with open(task_file , "w") as user_task_file :
+                    json.dump(task_list , user_task_file , indent= 3)
+                break
+
+        print("Task edited succesfully!")
+        print("\n")
+        print("New task list : ")
+        task_reader(task_file)
+
+    except ValueError:
+        print("Please enter only 1 number")
+
+def mark_task(task_file) :
+
+    task_list = json_file_check(task_file)
+    print("Tasks :")
+    task_reader(task_file)
+    if not task_list:
+        return
+
+    while True:
+        try:
+            user_choice = int(input("Which task would you like to mark as completed?"))
         except ValueError:
-            print("Please enter only 1 number")
+            print("Please enter a number")
+            continue
+
+        if user_choice < 1 or user_choice > len(task_list) :
+            print(f"Please enter between 1 and {len(task_list)} ")
+            continue
+        break
+
+    if task_list[user_choice -1]["completed"]:
+        print("This task is already marked as completed.")
+        return
+
+    task_list[user_choice -1]["completed"] = True 
+
+    with open(task_file , "w") as user_task_file:
+        json.dump(task_list , user_task_file , indent=4)
+    print()
+    print(f"Task '{task_list[user_choice -1]['task']}' marked as completed! ✅")
+
 
 
 #menu
@@ -197,7 +229,8 @@ while (True) :
     print("2 - Add new tasks")
     print("3 - Delete tasks")
     print("4 - Edit tasks")
-    print("5 - Exit")
+    print("5 - Mark completed tasks")
+    print("6 - Exit")
     print()
     user_choice = input(
     "Select an option :")
@@ -220,6 +253,10 @@ while (True) :
             edit_task(task_file)
             print(" --- ")
         case "5" :
+            print(" --- ")
+            mark_task(task_file)
+            print(" --- ")
+        case "6" :
             print(f"Have a nice day {username}!")
             break
 
