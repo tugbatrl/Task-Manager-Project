@@ -3,7 +3,7 @@ import os
 
 username = input("Enter username : ").lower()
 user_exist = False
-with open("users.txt" , "r") as user_file :
+with open("user.txt" , "r") as user_file :
 
     for logged_users in user_file: # file daki satırları tek tek okur
         logged_users = logged_users.strip() # başındaki ve sondaki boşlukları ve \n i siler
@@ -12,7 +12,7 @@ with open("users.txt" , "r") as user_file :
             user_exist = True
             break
 
-with open("users.txt" , "a") as user_file :
+with open("user.txt" , "a") as user_file :
     if not user_exist :
         print("User creating ...")
         user_file.write(f"{username}\n")
@@ -65,12 +65,13 @@ def task_writer(task_file):
             task_dic = {
                 "task" : task ,
                 "category" : category if category else None,
-                "due_date" : due_date if due_date else None
+                "due_date" : due_date if due_date else None,
+                "completed": False
             }
 
             task_list.append(task_dic)
         with open(task_file , "w") as user_task_file :
-            json.dump(task_list ,user_task_file, indent=3)
+            json.dump(task_list ,user_task_file, indent=4)
         print("Tasks saved !")
 
 #task read func
@@ -84,8 +85,9 @@ def task_reader(task_file):
 
     else:
         for i , task in enumerate(task_list , start = 1 ):
-            print(f"{i}- Task : {task["task"]}\n - Category : {task["category"]}\n - Due date : {task["due_date"]}")
-            print()
+            if task["complete" == False] :
+                print(f"{i}- Task : {task["task"]}\n - Category : {task["category"]}\n - Due date : {task["due_date"]}")
+                print()
 
 
 
@@ -137,46 +139,53 @@ def delete_task(task_file):
         return
 
 def edit_task(task_file):
-    
 
         try:
-            lines = get_tasks(task_file)
-            if not lines:
-                print("Task list is empty, nothing to edit.")
+            
+            task_list = json_file_check(task_file)
+            print("Tasks:")
+            task_reader(task_file)
+            if not task_list:
                 return
-            print_task(lines)
 
             while True :
                 user_choice = int(input("Choose the task to edit :"))
 
-                if user_choice < 1 or user_choice > len(lines) :
-                    print(f"Please enter between 1 and {len(lines)} ")
+                if user_choice < 1 or user_choice > len(task_list) :
+                    print(f"Please enter between 1 and {len(task_list)} ")
                     continue
 
                 else:
-                    
+
                     while True:
+
                         new_task = input("Enter new task: ")
                         if new_task == "":
                             print("Task cannot be empty! Try again.")
                             continue
                         break
 
-                    lines[user_choice - 1] = new_task
+                    new_category = input("Enter category (to skip press enter): ")
+                    new_due_date = input("Enter due date (to skip press enter): ")
+
+                    new_task_dict =  {"task" : new_task ,
+                                      "category" : new_category if new_category else None,
+                                      "due_date" : new_due_date if new_due_date else None 
+                                     }
+
+                    task_list[user_choice - 1] = new_task_dict
 
                     with open(task_file , "w") as user_task_file :
-
-                        for task in lines :
-                            user_task_file.write(task + "\n")
+                        json.dump(task_list , user_task_file , indent= 3)
                     break
 
             print("Task edited succesfully!")
             print("\n")
             print("New task list : ")
-            print_task(lines)
+            task_reader(task_file)
 
         except ValueError:
-            print("Please enter a number")
+            print("Please enter only 1 number")
 
 
 #menu
