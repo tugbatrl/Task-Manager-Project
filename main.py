@@ -1,4 +1,5 @@
-
+import json
+import os
 
 username = input("Enter username : ").lower()
 user_exist = False
@@ -21,11 +22,19 @@ with open("users.txt" , "a") as user_file :
 #adding tasks func
 
 
-task_file = f"{username}_tasks.txt"
+task_file = f"{username}_tasks.json"
+
 
 def task_writer(task_file): 
 
-    with open(task_file , "a") as user_task_file :
+        if os.path.exists(task_file) :
+            try:
+                with open(task_file , "r") as user_task_file:
+                    task_list = json.load(user_task_file)
+            except json.JSONDecodeError :
+                task_list = []
+        else :
+            task_list = []
 
         while (True) :
             task = input("Enter new task (to exit press 1) : ")
@@ -40,9 +49,20 @@ def task_writer(task_file):
             if len(task) > 100:
                 print("Görev çok uzun, tekrar dene.")
                 continue
+
+            category = input("Enter category (to skip press enter): ")
+            due_date = input("Enter due date (to skip press enter): ")
         
-            user_task_file.write(f"{task} \n") 
-    print("Tasks saved !")
+            task_dic = {
+                "task" : task ,
+                "category" : category if category else None,
+                "due_date" : due_date if due_date else None
+            }
+
+            task_list.append(task_dic)
+        with open(task_file , "w") as user_task_file :
+            json.dump(task_list ,user_task_file, indent=3)
+        print("Tasks saved !")
 
 #task read func
 
