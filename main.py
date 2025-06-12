@@ -56,7 +56,7 @@ def task_writer(task_file):
             break
 
         if len(task) > 100:
-            print("Görev çok uzun, tekrar dene.")
+            print("Task is too long, try again.")
             continue
 
         category = input("Enter category (to skip press enter): ")
@@ -129,7 +129,7 @@ def delete_task(task_file):
                         new_task.append(task)
 
                 with open(task_file , "w") as user_task_file :
-                    json.dump(new_task , user_task_file , indent=3)
+                    json.dump(new_task , user_task_file , indent=4)
 
                 print("Deleting completed!")
 
@@ -176,7 +176,7 @@ def edit_task(task_file):
                 task_list[user_choice - 1]["due_date"] = new_due_date if new_due_date else None
 
                 with open(task_file , "w") as user_task_file :
-                    json.dump(task_list , user_task_file , indent= 3)
+                    json.dump(task_list , user_task_file , indent= 4)
                 break
 
         print("Task edited succesfully!")
@@ -197,7 +197,7 @@ def mark_task(task_file) :
 
     while True:
         try:
-            user_choice = int(input("Which task would you like to mark as completed?"))
+            user_choice = int(input("Which task would you like to mark as completed?: "))
         except ValueError:
             print("Please enter a number")
             continue
@@ -264,6 +264,29 @@ def filter_task(task_file) :
                 print()
 
 
+def delete_completed_tasks(task_file):
+
+    task_list = json_file_check(task_file)
+    print("Tasks :")
+    task_reader(task_file)
+    if not task_list:
+        return
+
+    completed_tasks = [task for task in task_list if task["completed"]]
+    if not completed_tasks:
+        print("There are no completed tasks")
+        return
+
+    incompleted_tasks = incompleted_tasks = [task for task in task_list if not task["completed"]]
+
+    with open(task_file , "w") as user_task_file :
+        json.dump(incompleted_tasks , user_task_file , indent=4)
+
+    print("Completed tasks deleted!")
+    print("\nUpdated task list:")
+    task_reader(task_file)
+
+
 #menu
 print(f"What would you like to do today {username} ?")
 print(" --- ")
@@ -305,7 +328,23 @@ while (True) :
             print(" --- ")                  
         case "3" :
             print(" --- ")
-            delete_task(task_file)
+            print("1- Select task to delete")
+            print("2- Delete all completed tasks")
+
+            while True:
+                try:
+                    user_r_choice = int(input("Choose 1 or 2: "))
+                    if user_r_choice < 1 or user_r_choice > 2 :
+                        print(f"Please enter 1 or 2 ")
+                        continue
+                    break
+                except ValueError:
+                    print("Please enter a number")
+                    continue
+            if user_r_choice == 1:
+                delete_task(task_file)
+            elif user_r_choice == 2:
+                delete_completed_tasks(task_file)
             print(" --- ")
         case "4" :
             print(" --- ")
