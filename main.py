@@ -30,6 +30,10 @@ def task_writer(task_file):
         while (True) :
             task = input("Enter new task (to exit press 1) : ")
 
+            if task == "":
+                print("Task cannot be empty! Try again.")
+                continue
+
             if task == "1" :
                 break
 
@@ -57,26 +61,39 @@ def task_reader(task_file):
 
 
     except FileNotFoundError:
-        
         print("File cannot be found new file creating...")
-        
         with open(task_file , "x") as user_task_file :
-
             pass
+        print("File created!")
 
-def delete_task(task_file): 
-    print("Tasks: ")
+def get_tasks(task_file) : #helper func.
     try:
         with open(task_file , "r") as user_task_file :
-            lines = user_task_file.readlines()
+            tasks = [line.strip() for line in user_task_file.readlines()]
+        return tasks
+    
+    except FileNotFoundError :
+        print("File cannot be found new file creating...")
+        with open(task_file , "x") as user_task_file :
+            pass
+        print("File created!")
+        return []
 
-            if not lines :
-                print("Task list is empty")
-                return
+def print_task(lines) : #helper func.
 
-            for i , line in enumerate(lines , start = 1 ):
-                print(f"{i}- {line.strip()}")
+    print("Tasks: ")
+    for i , line in enumerate(lines , start = 1 ):
+        print(f"{i}- {line}")
 
+def delete_task(task_file): 
+    
+    try:
+
+        lines = get_tasks(task_file)
+        if not lines:
+            print("Task list is empty, nothing to delete.")
+            return
+        print_task(lines)
 
         max_input = len(lines)
         while True :
@@ -106,7 +123,7 @@ def delete_task(task_file):
                 with open(task_file , "w") as user_task_file :
 
                     for task in new_task :
-                        user_task_file.write(task)
+                        user_task_file.write(task + "\n")
                 print("Deleting completed!")
 
                 print("\nUpdated task list:")
@@ -114,14 +131,51 @@ def delete_task(task_file):
                 break
             continue
 
-
-    except FileNotFoundError:
-        print("File cannot be found. Firstly create a file. (to create a file choose option 2 - add new tasks)")
-        return
     except ValueError:
         print("İnvalid input")
         return
 
+def edit_task(task_file):
+    
+
+        try:
+            lines = get_tasks(task_file)
+            if not lines:
+                print("Task list is empty, nothing to edit.")
+                return
+            print_task(lines)
+
+            while True :
+                user_choice = int(input("Choose the task to edit :"))
+
+                if user_choice < 1 or user_choice > len(lines) :
+                    print(f"Please enter between 1 and {len(lines)} ")
+                    continue
+
+                else:
+                    
+                    while True:
+                        new_task = input("Enter new task: ")
+                        if new_task == "":
+                            print("Task cannot be empty! Try again.")
+                            continue
+                        break
+
+                    lines[user_choice - 1] = new_task
+
+                    with open(task_file , "w") as user_task_file :
+
+                        for task in lines :
+                            user_task_file.write(task + "\n")
+                    break
+
+            print("Task edited succesfully!")
+            print("\n")
+            print("New task list : ")
+            print_task(lines)
+
+        except ValueError:
+            print("Please enter a number")
 
 
 #menu
@@ -132,7 +186,8 @@ while (True) :
     print("1 - Read tasks")
     print("2 - Add new tasks")
     print("3 - Delete tasks")
-    print("4 - Exit")
+    print("4 - Edit tasks")
+    print("5 - Exit")
     print()
     user_choice = input(
     "Select an option :")
@@ -151,6 +206,10 @@ while (True) :
             delete_task(task_file)
             print(" --- ")
         case "4" :
+            print(" --- ")
+            edit_task(task_file)
+            print(" --- ")
+        case "5" :
             print(f"Have a nice day {username}!")
             break
 
