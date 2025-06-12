@@ -85,38 +85,19 @@ def task_reader(task_file):
     else:
         for i , task in enumerate(task_list , start = 1 ):
             print(f"{i}- Task : {task["task"]}\n - Category : {task["category"]}\n - Due date : {task["due_date"]}")
+            print()
 
 
-def get_tasks(task_file) : #helper func.
-    try:
-        with open(task_file , "r") as user_task_file :
-            tasks = [line.strip() for line in user_task_file.readlines()]
-        return tasks
-    
-    except FileNotFoundError :
-        print("File cannot be found new file creating...")
-        with open(task_file , "x") as user_task_file :
-            pass
-        print("File created!")
-        return []
-
-def print_task(lines) : #helper func.
-
-    print("Tasks: ")
-    for i , line in enumerate(lines , start = 1 ):
-        print(f"{i}- {line}")
 
 def delete_task(task_file): 
-    
+
     try:
-
-        lines = get_tasks(task_file)
-        if not lines:
-            print("Task list is empty, nothing to delete.")
+        task_list = json_file_check(task_file)
+        print("Tasks:")
+        task_reader(task_file)
+        if not task_list:
             return
-        print_task(lines)
 
-        max_input = len(lines)
         while True :
             delete_input_list = input("Please choose the tasks that you want to delete (put comma between numbers) : ").split(",")
 
@@ -130,21 +111,20 @@ def delete_task(task_file):
                 continue
 
             for i in delete_indexes:
-                if i < 1 or i > max_input :
-                    print("invalid input , try again!")
+                if i < 1 or i > len(task_list) :
+                    print(f"Please enter between 1 and {len(task_list)} ")
                     break
 
             else:
 
                 new_task = []
-                for i , task in enumerate(lines , start= 1) :
+                for i , task in enumerate(task_list , start= 1) :
                     if i not in delete_indexes:
                         new_task.append(task)
 
                 with open(task_file , "w") as user_task_file :
+                    json.dump(new_task , user_task_file , indent=3)
 
-                    for task in new_task :
-                        user_task_file.write(task + "\n")
                 print("Deleting completed!")
 
                 print("\nUpdated task list:")
