@@ -87,10 +87,10 @@ def task_reader(task_file):
     else:
         for i , task in enumerate(task_list , start = 1 ):
             if task["completed"] == False :
-                print(f"[ ] {i}- Task : {task["task"]}\n - Category : {task["category"]}\n - Due date : {task["due_date"]}")
+                print(f"[ ] {i}- Task : {task['task']}\n - Category : {task['category']}\n - Due date : {task['due_date']}")
                 print()
             elif task["completed"] == True :
-                print(f"[x] {i}- Task : {task["task"]}\n - Category : {task["category"]}\n - Due date : {task["due_date"]}")
+                print(f"[x] {i}- Task : {task['task']}\n - Category : {task['category']}\n - Due date : {task['due_date']}")
                 print()
 
 
@@ -218,6 +218,50 @@ def mark_task(task_file) :
     print()
     print(f"Task '{task_list[user_choice -1]['task']}' marked as completed! ✅")
 
+def filter_task(task_file) :
+
+    task_list = json_file_check(task_file)
+    print("Tasks :")
+    task_reader(task_file)
+    if not task_list:
+        return
+    
+    while True:
+        try:
+            print("1- Show completed")
+            print("2- Show incompleted")
+
+            user_choice = int(input("Choose Filter: "))
+
+            if user_choice < 1 or user_choice > 2 :
+                print(f"Please enter between 1 and 2 ")
+                continue
+            break
+        except ValueError:
+            print("Please enter a number")
+            continue
+
+    if user_choice == 1:
+        completed_tasks = [task for task in task_list if task["completed"]]
+        if not completed_tasks:
+            print("There are no completed task")
+            return
+
+        for i , task in enumerate(task_list , start = 1 ):
+            if task["completed"] == True:
+                print(f"[x] {i}- Task : {task['task']}\n - Category : {task['category']}\n - Due date : {task['due_date']}")
+                print()
+
+    elif user_choice == 2:
+        incompleted_tasks = [task for task in task_list if not task["completed"]]
+        if not incompleted_tasks:
+            print("There are no incompleted task")
+            return
+
+        for i , task in enumerate(task_list , start = 1 ):
+            if task["completed"] == False :
+                print(f"[ ] {i}- Task : {task['task']}\n - Category : {task['category']}\n - Due date : {task['due_date']}")
+                print()
 
 
 #menu
@@ -238,7 +282,22 @@ while (True) :
     match user_choice :
         case "1" :
             print(" --- ")
-            task_reader(task_file)
+            print("1- Show all task")
+            print("2- Use filter")
+            while True:
+                try:
+                    user_r_choice = int(input("Choose 1 or 2: "))
+                    if user_r_choice < 1 or user_r_choice > 2 :
+                        print(f"Please enter 1 or 2 ")
+                        continue
+                    break
+                except ValueError:
+                    print("Please enter a number")
+                    continue
+            if user_r_choice == 1:
+                task_reader(task_file)
+            elif user_r_choice == 2:
+                filter_task(task_file)
             print(" --- ")
         case "2" :
             print(" --- ")
