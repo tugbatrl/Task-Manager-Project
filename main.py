@@ -25,16 +25,25 @@ with open("users.txt" , "a") as user_file :
 task_file = f"{username}_tasks.json"
 
 
-def task_writer(task_file): 
+def json_file_check(task_file) :
 
-        if os.path.exists(task_file) :
+    if os.path.exists(task_file) :
             try:
                 with open(task_file , "r") as user_task_file:
-                    task_list = json.load(user_task_file)
+                    return json.load(user_task_file)
             except json.JSONDecodeError :
-                task_list = []
-        else :
-            task_list = []
+                return []
+    else :
+        print("Task file cannot be found. New file creating...")
+        with open(task_file ,"w") as user_task_file:
+            json.dump([],user_task_file)
+            return []
+        print("Completed!")
+
+
+def task_writer(task_file): 
+
+        task_list = json_file_check(task_file)
 
         while (True) :
             task = input("Enter new task (to exit press 1) : ")
@@ -68,23 +77,15 @@ def task_writer(task_file):
 
 def task_reader(task_file):
 
-    try:
-        with open(task_file , "r") as user_task_file :
-            lines = user_task_file.readlines()
+    task_list = json_file_check(task_file)
 
-            if not lines :
-                print("Task list is empty")
+    if not task_list :
+        print("Task list is empty")
 
-            else:
-                for i , line in enumerate(lines , start = 1 ):
-                    print(f"{i}- {line.strip()}")
+    else:
+        for i , task in enumerate(task_list , start = 1 ):
+            print(f"{i}- Task : {task["task"]}\n - Category : {task["category"]}\n - Due date : {task["due_date"]}")
 
-
-    except FileNotFoundError:
-        print("File cannot be found new file creating...")
-        with open(task_file , "x") as user_task_file :
-            pass
-        print("File created!")
 
 def get_tasks(task_file) : #helper func.
     try:
