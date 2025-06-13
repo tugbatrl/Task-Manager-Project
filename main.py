@@ -246,6 +246,7 @@ def filter_task(task_file) : #Görev filtreleme fonksiyonu
 
         for i , task in enumerate(task_list , start = 1 ):#Sadece tamamlanmış görevleri yazdırır
             if task["completed"] == True:
+                print()
                 print(f"[x] {i}- Task : {task['task']}\n - Category : {task['category']}\n - Due date : {task['due_date']}")
                 print()
 
@@ -257,6 +258,7 @@ def filter_task(task_file) : #Görev filtreleme fonksiyonu
 
         for i , task in enumerate(task_list , start = 1 ): #Sadece tamamlanmış görevleri yazdırır
             if task["completed"] == False :
+                print()
                 print(f"[ ] {i}- Task : {task['task']}\n - Category : {task['category']}\n - Due date : {task['due_date']}")
                 print()
 
@@ -316,6 +318,7 @@ while (True) :
                     print("Please enter a number")
                     continue
             if user_r_choice == 1:
+                print()
                 task_reader(task_file)
             elif user_r_choice == 2:
                 filter_task(task_file)
