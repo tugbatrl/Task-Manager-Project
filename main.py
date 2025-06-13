@@ -136,14 +136,15 @@ def delete_task(task_file):  #Görev silme fonksiyonu
 
 def edit_task(task_file): #Görev editleme fonksiyonu
 
-    try:
-        task_list = json_file_check(task_file)
-        print("Tasks:")
-        task_reader(task_file)
-        if not task_list:
-            return
-        #Tek seferde 1 görev düzenler
-        while True :
+    task_list = json_file_check(task_file)
+    print("Tasks:")
+    task_reader(task_file)
+    if not task_list:
+        return
+    #Tek seferde 1 görev düzenler
+
+    while True :
+        try:
             user_choice = int(input("Choose the task to edit :"))
 
             if user_choice < 1 or user_choice > len(task_list) :
@@ -159,25 +160,27 @@ def edit_task(task_file): #Görev editleme fonksiyonu
                         print("Task cannot be empty! Try again.")
                         continue
                     break
+        except ValueError:
+            print("Please enter only 1 number")
+            continue
 
-                new_category = input("Enter category (to skip press enter): ") #Tüm görevleri baştan editler
-                new_due_date = input("Enter due date (to skip press enter): ")
+        new_category = input("Enter category (to skip press enter): ") #Tüm görevleri baştan editler
+        new_due_date = input("Enter due date (to skip press enter): ")
 
-                task_list[user_choice - 1]["task"] = new_task
-                task_list[user_choice - 1]["category"] = new_category if new_category else None
-                task_list[user_choice - 1]["due_date"] = new_due_date if new_due_date else None
+        task_list[user_choice - 1]["task"] = new_task
+        task_list[user_choice - 1]["category"] = new_category if new_category else None
+        task_list[user_choice - 1]["due_date"] = new_due_date if new_due_date else None
 
-                with open(task_file , "w") as user_task_file :
-                    json.dump(task_list , user_task_file , indent= 4)
-                break
+        with open(task_file , "w") as user_task_file :
+            json.dump(task_list , user_task_file , indent= 4)
 
-        print("Task edited succesfully!")
-        print("\n")
-        print("New task list : ")
-        task_reader(task_file)
+        break
 
-    except ValueError:
-        print("Please enter only 1 number")
+    print("Task edited succesfully!")
+    print("\n")
+    print("New task list : ")
+    task_reader(task_file)
+
 
 def mark_task(task_file) : #Tamamlanan görevleri işaretleme fonksiyonu
 
@@ -215,13 +218,13 @@ def filter_task(task_file) : #Görev filtreleme fonksiyonu
     #Görevleri tamamlanmış ya da tamamlanmamış olarak filtreleyip gösterir
 
     task_list = json_file_check(task_file)
-    print("Tasks :")
-    task_reader(task_file)
     if not task_list:
+        print("Task list is empty!")
         return
-    
+
     while True:
         try:
+            print()
             print("1- Show completed")
             print("2- Show incompleted")
 
